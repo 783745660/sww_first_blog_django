@@ -1,0 +1,121 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% load blog_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Black &amp; White</title>
+</head>
+<body>
+<div class="content-body">
+    <div class="container">
+        <div class="row">
+            <main class="col-md-8">
+                {% block main %}
+                    {% if error_msg %}
+                        <p>{{ error_msg }}</p>
+                    {% endif %}
+                {% for article in latest_article_list %}
+                    <article class="article  article-{{ article.pk }}">
+                    <header class="article-header">
+                        <h1 class="article-title">
+                            <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+                        </h1>
+                        <div class="entry-meta">
+                            <span class="article-category"><a href="{% url 'blog:category' article.category.pk%}">{{ article.category }}</a></span>
+                            <span class="article-date"><a href="#"><time class="article-date"
+                                                                      datetime="{{ article.pub_date }}">{{ article.pub_date }}</time></a></span>
+                            <span class="article-author"><a href="#">{{ article.author }}</a></span>
+                            <span class="comments-link">
+                                <a href="{% url 'blog:detail' article.pk %}#comment-area">评论{{ article.comment_set.count }}</a></span>
+                            <span class="views-count"><a href="{% url 'blog:detail' article.pk %}">阅读{{ article.views_num }} </a></span>
+                        </div>
+                    </header>
+                    <div class="article-content clearfix">
+                        <p>{{ article.abstract }}</p>
+                        <div class="read-more cl-effect-14">
+                            <a href="{{ article.get_absolute_url }}" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+
+                {% for article in article_list %}
+                    <article class="article  article-{{ article.pk }}">
+                    <header class="article-header">
+                        <h1 class="article-title">
+                            <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+                        </h1>
+                        <div class="entry-meta">
+                            <span class="article-category"><a href="{% url 'blog:category' article.category.pk %}">{{ article.category }}</a></span>
+                            <span class="article-date"><a href="#"><time class="article-date"
+                                                                      datetime="{{ article.pub_date }}">{{ article.pub_date }}</time></a></span>
+                            <span class="article-author"><a href="#">{{ article.author }}</a></span>
+                            <span class="comments-link">
+                                <a href="{% url 'blog:detail' article.pk %}#comment-area">评论{{ article.comment_set.count }}</a></span>
+                            <span class="views-count"><a href="{% url 'blog:detail' article.pk %}">阅读{{ article.views_num }}</a></span>
+                        </div>
+                    </header>
+                    <div class="article-content clearfix">
+                        <p>{{ article.abstract }}</p>
+                        <div class="read-more cl-effect-14">
+                            <a href="{{ article.get_absolute_url }}" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
+                        </div>
+                    </div>
+                </article>
+{#                {% empty %}#}
+{#                    <div class="no-artcle">暂时没有文章发布！</div>#}
+                {% endfor %}
+
+                {% if is_paginated %}
+                <div class="pagination">
+                    {% if first %}
+                        <a href="?page=1">1</a>
+                    {% endif %}
+                    {% if left %}
+                        {% if left_has_more %}
+                            <span>...</span>
+                        {% endif %}
+                        {% for i in left %}
+                        <a href="?page={{i}}">{{ i }}</a>
+                        {% endfor %}
+                    {% endif %}
+                    <a href="?page={{ page_obj.number }}" style="color: green">{{ page_obj.number }}</a>
+                    {% if right %}
+                        {% for i in right %}
+                        <a href="?page={{i}}">{{ i }}</a>
+                        {% endfor %}
+                        {% if right_has_more %}
+                            <span>...</span>
+                        {% endif %}
+                    {% endif %}
+                    {% if last %}
+                        <a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endblock main %}
+            </main>
+            <aside class="col-md-4">
+            </aside>
+        </div>
+    </div>
+</div>
+<footer id="site-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                {% block bottom %}
+                <p class="copyright">&copy 2019 - 采集自 <a href="http://www.cssmoban.com/"
+                                                        target="_blank" title="模板之家">模板之家</a>
+                    - 由<a href="http://zmrenwu.com/" title="网页模板" target="_blank">追梦人物的博客</a>修改
+                </p>
+                {% endblock bottom %}
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Mobile Menu -->
+</body>
+</html>

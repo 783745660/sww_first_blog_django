@@ -1,0 +1,100 @@
+{% extends 'blog/base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Black &amp; White</title>
+</head>
+<body id="single">
+<div class="content-body">
+    <div class="container">
+        <div class="row">
+            <main class="col-md-8">
+                {% block main %}
+                <article class="article artcile-1">
+                    <header class="entry-header">
+                        <h1 class="article-title">{{ article.title }}</h1>
+                        <div class="article-meta">
+                            <span class="artcile-category"><a href="{% url 'blog:category' article.category.pk%}">{{ article.category }}</a></span>
+                            <span class="article-date"><a href="#"><time class="article-date"
+                                                                      datetime="article.pub_date">{{ article.pub_date }}</time></a></span>
+                            <span class="article-author"><a href="#">{{ article.author }}</a></span>
+                            <span class="comments-link">
+                                <a href="{% url 'blog:detail' article.pk %}#comment-area">评论{{ article.comment_set.count }}</a></span>
+                            <span class="views-count"><a href="{% url 'blog:detail' article.pk %}">阅读{{ article.views_num }}</a></span>
+                        </div>
+                    </header>
+                    <div class="entry-content clearfix">
+                     {{ article.content|safe}}
+                        <div class="widget-tag-cloud">
+                            <ul>
+                                标签：
+                                {% for tag in article.tag.all %}
+                                    <li><a href="{% url 'blog:tag' tag.pk %}">#{{ tag.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+                <section class="comment-area" id="comment-area">
+                    <hr>
+                    <h3>发表评论</h3>
+                    <form action="{% url 'comments:article_comment' article.pk %}" method="post" class="comment-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="{{ form.name.id_for_label }}">名字：</label>
+                                {{ form.name }}
+                                {{ form.name.errors }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.email.id_for_label }}">邮箱：</label>
+                                {{ form.email }}
+                                {{ form.email.errors }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.url.id_for_label }}">URL：</label>
+                                {{ form.url }}
+                                {{ form.url.errors }}
+                            </div>
+                            <div class="col-md-8">
+                                <label for="{{ form.text.id_for_label }}">内容：</label>
+                                {{ form.text }}
+                                {{ form.text.errors }}
+                                <button type="submit" class="comment-btn">发表</button>
+                            </div>
+                        </div><!-- row -->
+                    </form>
+                    <div >
+                    <div class="comment-list-panel">
+                        <h3>评论列表，共 <span>{{ article.comment_set.count }}</span> 条评论</h3>
+                        <ul class="comment-list list-unstyled">
+                            {% for comment in comment_list %}
+                            <li class="comment-item">
+                                <span class="nickname">{{comment.name}}</span>
+                                <time class="submit-date">{{ comment.comment_time }}</time>
+                                <div class="text">
+                                    {{ comment.text }}
+                                </div>
+                            </li>
+                            {% empty %}
+                            暂无评论
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    </div>
+                </section>
+                {% endblock main %}
+            </main>
+            <aside class="col-md-4">
+                {% block toc %}
+                    <div class="widget widget-content">
+                        <h3 class="widget-title">文章目录</h3>
+                        {{ article.toc|safe }}
+                    </div>
+                {% endblock toc %}
+            </aside>
+        </div>
+    </div>
+</div>
+</body>
+</html>
